@@ -3,7 +3,7 @@ from typing import List, Optional
 from email.message import EmailMessage
 from googleapiclient.errors import HttpError
 
-from google_api_core import GoogleAPICore
+from .google_api_core import GoogleAPICore
 
 # SCOPES removed; now inherited from GoogleAPICore
 
