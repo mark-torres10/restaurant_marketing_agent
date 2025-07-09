@@ -1,5 +1,6 @@
 language = "python3"
 run = "uvicorn api:app --host 0.0.0.0 --port 8000"
+modules = ["python-3.11"]
 
 [nix]
 args = ["-v"]
@@ -8,7 +9,7 @@ args = ["-v"]
 language = "python3"
 
 [deployment]
-run = ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+run = ["sh", "-c", "python send_drafts_to_email.py"]
 
 [packager]
 language = "python3"
@@ -20,3 +21,15 @@ replMode = true
 [packager.language-specific.python]
 unitTest = "python3 -m unittest discover"
 venv = "/home/runner/.local/share/virtualenvs/python3"
+
+[workflows]
+runButton = "Send Email Drafts"
+
+[[workflows.workflow]]
+name = "Send Email Drafts"
+author = 10540434
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python send_drafts_to_email.py"
