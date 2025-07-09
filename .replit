@@ -1,0 +1,21 @@
+language = "python3"
+run = "uvicorn api:app --host 0.0.0.0 --port 8000"
+
+[nix]
+args = ["-v"]
+
+[unitTest]
+language = "python3"
+
+[deployment]
+run = ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+
+[packager]
+language = "python3"
+
+[packager.features]
+packageSearch = true
+replMode = true
+
+[packager.language-specific]
+python = {"unitTest": "python3 -m unittest discover", "venv": "/home/runner/.local/share/virtualenvs/python3"}
