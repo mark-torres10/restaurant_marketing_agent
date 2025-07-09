@@ -44,4 +44,5 @@ class GoogleAPICore:
                 creds = flow.run_local_server(port=0)
             with open(self.token_path, "w") as token:
                 token.write(creds.to_json())
-        return build(self.api_name, self.api_version, credentials=creds) 
+        return build(self.api_name, self.api_version, credentials=creds)
+
