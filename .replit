@@ -17,5 +17,6 @@ language = "python3"
 packageSearch = true
 replMode = true
 
-[packager.language-specific]
-python = {"unitTest": "python3 -m unittest discover", "venv": "/home/runner/.local/share/virtualenvs/python3"}
+[packager.language-specific.python]
+unitTest = "python3 -m unittest discover"
+venv = "/home/runner/.local/share/virtualenvs/python3"
