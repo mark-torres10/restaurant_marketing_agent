@@ -2,6 +2,7 @@ import argparse
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
+import traceback
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,7 +34,9 @@ def generate_post(platform, topic):
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error generating post for {platform}: {e}"
+        error_message = f"LLM Error for {platform}: {e}\n{traceback.format_exc()}"
+        print(error_message) # Print to console for immediate visibility
+        return f"ERROR_LLM_GENERATION: {error_message}"
 
 def main():
     parser = argparse.ArgumentParser(description="Generate marketing posts for a restaurant.")
