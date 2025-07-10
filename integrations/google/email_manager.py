@@ -7,11 +7,13 @@ from .google_api_core import GoogleAPICore
 
 # SCOPES removed; now inherited from GoogleAPICore
 
+
 class EmailManager(GoogleAPICore):
     """
     Manages sending emails via the Gmail API using OAuth2 credentials.
     Requires credentials.json in the working directory.
     """
+
     def __init__(self, credentials_path: str = None, token_path: str = None):
         super().__init__(
             api_name="gmail",
@@ -33,8 +35,10 @@ class EmailManager(GoogleAPICore):
         only send to one email address.
         """
         # TODO: Implement email validation
-        print(f"[STUB]: Validating recipient emails: {emails} -> mtorres.sandbox@gmail.com")
-        return ["mtorres.sandbox@gmail.com"]
+        print(
+            f"[STUB]: Validating recipient emails: {emails} -> mtorres.sandbox@gmail.com"
+        )
+        return ["mtorres.sandbox@gmail.com", "markptorres1@gmail.com"]
 
     def send_email(
         self,
@@ -73,15 +77,18 @@ class EmailManager(GoogleAPICore):
         if bcc:
             email_message["Bcc"] = ", ".join(bcc)
         # Attachments not implemented in this stub
-        encoded_message = base64.urlsafe_b64encode(email_message.as_bytes()).decode()
+        encoded_message = base64.urlsafe_b64encode(
+            email_message.as_bytes()).decode()
         create_message = {"raw": encoded_message}
         try:
-            send_message = self.service.users().messages().send(userId="me", body=create_message).execute()
+            send_message = self.service.users().messages().send(
+                userId="me", body=create_message).execute()
             print(f"Message Id: {send_message['id']}")
             return send_message["id"]
         except HttpError as error:
             print(f"An error occurred: {error}")
             raise
+
 
 if __name__ == "__main__":
     # Example usage: send a test email to mtorres.sandbox@gmail.com
@@ -91,6 +98,8 @@ if __name__ == "__main__":
     FROM = "mtorres.sandbox@gmail.com"  # Must match authenticated user
     manager = EmailManager()
     print("Sending test email...")
-    manager.send_email(subject=SUBJECT, message=BODY, recipients=TO, sender=FROM)
+    manager.send_email(subject=SUBJECT,
+                       message=BODY,
+                       recipients=TO,
+                       sender=FROM)
     print("Email sent.")
-
