@@ -34,15 +34,43 @@ class GoogleAPICore:
 
     def _get_service(self):
         creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
         if os.path.exists(self.token_path):
             creds = Credentials.from_authorized_user_file(self.token_path, self.scopes)
+        
+        # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(self.credentials_path, self.scopes)
-                creds = flow.run_local_server(port=0)
+                # Try to load credentials from environment variables first
+                client_id = os.environ.get("GOOGLE_CLIENT_ID")
+                client_secret = os.environ.get("GOOGLE_CLIENT_SECRET")
+                refresh_token = os.environ.get("GOOGLE_REFRESH_TOKEN")
+
+                if client_id and client_secret and refresh_token:
+                    creds = Credentials(
+                        None,
+                        refresh_token=refresh_token,
+                        token_uri="https://oauth2.googleapis.com/token",
+                        client_id=client_id,
+                        client_secret=client_secret,
+                        scopes=self.scopes,
+                    )
+                    # Refresh the credentials to get a new access token
+                    creds.refresh(Request())
+                else:
+                    # Fallback to local flow if no environment variables are set
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        self.credentials_path, self.scopes
+                    )
+                    creds = flow.run_local_server(port=0)
+            
+            # Save the credentials for the next run
             with open(self.token_path, "w") as token:
                 token.write(creds.to_json())
+
         return build(self.api_name, self.api_version, credentials=creds)
 
