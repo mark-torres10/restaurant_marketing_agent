@@ -2,6 +2,10 @@ import os
 import json
 import tempfile
 import traceback
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Import the post generation logic
 from write_post import generate_post
