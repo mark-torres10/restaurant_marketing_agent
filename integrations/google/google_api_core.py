@@ -11,11 +11,13 @@ SCOPES = [
     "https://www.googleapis.com/auth/calendar.events"
 ]
 
+
 class GoogleAPICore:
     """
     Base class for Google API integrations. Handles OAuth2 credential loading, token refresh,
     and service building for Google APIs.
     """
+
     def __init__(
         self,
         api_name: str,
@@ -28,8 +30,10 @@ class GoogleAPICore:
         self.api_version = api_version
         self.scopes = scopes or SCOPES
         self.current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.credentials_path = credentials_path or os.path.join(self.current_dir, "credentials.json")
-        self.token_path = token_path or os.path.join(self.current_dir, "token.json")
+        self.credentials_path = credentials_path or os.path.join(
+            self.current_dir, "credentials.json")
+        self.token_path = token_path or os.path.join(self.current_dir,
+                                                     "token.json")
         self.service = self._get_service()
 
     def _get_service(self):
@@ -37,9 +41,9 @@ class GoogleAPICore:
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
-        if os.path.exists(self.token_path):
-            creds = Credentials.from_authorized_user_file(self.token_path, self.scopes)
-        
+        # if os.path.exists(self.token_path):
+        #     creds = Credentials.from_authorized_user_file(self.token_path, self.scopes)
+
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -64,13 +68,11 @@ class GoogleAPICore:
                 else:
                     # Fallback to local flow if no environment variables are set
                     flow = InstalledAppFlow.from_client_secrets_file(
-                        self.credentials_path, self.scopes
-                    )
+                        self.credentials_path, self.scopes)
                     creds = flow.run_local_server(port=0)
-            
+
             # Save the credentials for the next run
             with open(self.token_path, "w") as token:
                 token.write(creds.to_json())
 
         return build(self.api_name, self.api_version, credentials=creds)
-
